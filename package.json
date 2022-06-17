@@ -1,7 +1,7 @@
 {
   "name": "lup-expires",
-  "version": "0.1.0",
-  "description": "Offers different data structures that allow temporary storing of objects. ",
+  "version": "1.0.0",
+  "description": "Offers different data structures that allow temporary storing of objects",
   "files": [
     "lib/**/*"
   ],

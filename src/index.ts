@@ -1,4 +1,4 @@
-import ExpireMap from "./ExpireMap";
+import * as ExpireMap from "./ExpireMap";
 
 export default {
   ExpireMap
