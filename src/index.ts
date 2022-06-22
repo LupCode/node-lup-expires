@@ -1,5 +1,4 @@
-import * as ExpireMap from "./ExpireMap";
+import * as map from "./ExpireMap";
 
-export default {
-  ExpireMap
-}
+export const ExpireMap = map.ExpireMap;
+export type ExpireMap<K, V> = map.ExpireMap<K, V>;

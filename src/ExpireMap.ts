@@ -1,4 +1,4 @@
-class ExpireMap<K, V> extends Map<K, any> {
+export class ExpireMap<K, V> extends Map<K, any> {
     private defaultMaxAge: number | null = null;
     
     // Data stored as:  <key, { data: any, expires: UTC }>
@@ -8,13 +8,11 @@ class ExpireMap<K, V> extends Map<K, any> {
      * Creates a new instance of an ExpireMap
      * @param {Number} defaultMaxAge Default milliseconds util an entry expires (if null then never expires)
      */
-    constructor(defaultMaxAge?: number | null){
+    constructor(iterable?: Iterable<readonly [K, V]> | null | undefined, defaultMaxAge?: number | null | undefined){
         super();
         this.defaultMaxAge = (!defaultMaxAge && defaultMaxAge !== 0) ? null : Math.max(0, defaultMaxAge);
+        if(iterable) for(const pair of iterable) this.set(pair[0], pair[1]);
     }
-  
-    // TODO constructor for [[key, value], [key, value], ...]
-  
   
     /**
      * @returns Amount of not expired elements in the Map
@@ -135,7 +133,7 @@ class ExpireMap<K, V> extends Map<K, any> {
      * @param {any} value Value that should be stored
      * @param {Number} maxAge Optional milliseconds after which the entry gets deleted (if null never expires, if undefined default max age will be used)
      */
-    set(key: K, value: V, maxAge=undefined){
+    set(key: K, value: V, maxAge?: number | null | undefined){
         super.set(key, {
             data: value, 
             expires: maxAge === undefined ? (
@@ -146,6 +144,4 @@ class ExpireMap<K, V> extends Map<K, any> {
         });
         return this;
     }
-  }
-  
-  export default ExpireMap;
+}

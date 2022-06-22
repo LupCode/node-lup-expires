@@ -1,6 +1,6 @@
 import { ExpireMap } from '../index';
 
-let map: ExpireMap;
+let map: ExpireMap<string, string>;
 
 describe('Testing ExpireMap', () => {
   beforeAll(async () => {
