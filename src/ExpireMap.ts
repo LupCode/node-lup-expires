@@ -35,7 +35,7 @@ export class ExpireMap<K, V> extends Map<K, any> {
      * @returns Amount of not expired elements in the Map
      */
     getSize(): number {
-        this.forEach(() => {}); // removes all expired entries
+        this.forEach(() => null); // removes all expired entries
         return this.size;
     }
 
@@ -115,7 +115,7 @@ export class ExpireMap<K, V> extends Map<K, any> {
         };
     }
   
-    forEach(callbackfn: Function, thisArg?: any){
+    forEach(callbackfn: (v: V, k: K, thisArg?: any) => void, thisArg?: any){
         const _this = this;
         super.forEach((entry, key) => {
             if(!entry) return;
@@ -126,7 +126,7 @@ export class ExpireMap<K, V> extends Map<K, any> {
     }
   
     get(key: K): V | undefined {
-        let entry: any = super.get(key);
+        const entry: any = super.get(key);
         if(!entry) return undefined;
         if(!entry.expires || (new Date()).getTime() < entry.expires) return entry.data;
         super.delete(key);
