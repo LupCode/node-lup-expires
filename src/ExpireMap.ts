@@ -10,8 +10,25 @@ export class ExpireMap<K, V> extends Map<K, any> {
      */
     constructor(iterable?: Iterable<readonly [K, V]> | null | undefined, defaultMaxAge?: number | null | undefined){
         super();
+        if(defaultMaxAge !== undefined) this.setDefaultMaxAge(defaultMaxAge);
+        if(iterable)
+            for(const pair of iterable)
+                if(pair && pair.length > 0) this.set(pair[0], pair[1]);
+    }
+
+    /**
+     * @returns {Number | null} Milliseconds after which an item gets removed by default or null if no default expire time is set
+     */
+    getDefaultMaxAge(): number | null {
+        return this.defaultMaxAge;
+    }
+
+    /**
+     * Sets the milliseconds after which an item gets removed by default
+     * @param defaultMaxAge {Number | null} Milliseconds or null to disabled default expire time
+     */
+    setDefaultMaxAge(defaultMaxAge: number | null){
         this.defaultMaxAge = (!defaultMaxAge && defaultMaxAge !== 0) ? null : Math.max(0, defaultMaxAge);
-        if(iterable) for(const pair of iterable) this.set(pair[0], pair[1]);
     }
   
     /**
@@ -22,31 +39,29 @@ export class ExpireMap<K, V> extends Map<K, any> {
         return this.size;
     }
 
+    [Symbol.iterator](){ return this.entries(); };
 
     entries(): IterableIterator<[K, V]> {
         const _this = this;
         const itr = super.entries();
 
-        const next = (): IteratorResult<[K, V]> => {
-            const now = new Date().getTime();
-            do {
-                const next = itr.next();
-                const pair = next.value;
-                const entry = pair ? pair[1] : null;
-                const notExpired = entry && (!entry.expires || now < entry.expires);
-
-                if(next.done || notExpired)
-                    return {
-                        value: [(pair ? pair[0] : undefined) as K, (entry ? entry.data : undefined) as V],
-                        done: next.done
-                    };
-                else if(pair && !notExpired) super.delete(pair[0]);
-            } while(true);
-        };
-
         return {
-            *[Symbol.iterator]() { next },
-            next
+            [Symbol.iterator](){ return this; },
+            next(): IteratorResult<[K, V]> {
+                const now = new Date().getTime();
+                do {
+                    const next = itr.next();
+                    const pair = next.value;
+                    const entry = pair ? pair[1] : null;
+                    const notExpired = entry && (!entry.expires || now < entry.expires);
+                    if(next.done || notExpired)
+                        return {
+                            value: (pair ? [pair[0], (entry ? entry.data : undefined)] : undefined) as [K, V],
+                            done: next.done
+                        };
+                    else if(pair && !notExpired) _this.delete(pair[0]);
+                } while(true);
+            }
         };
     }
 
@@ -54,26 +69,24 @@ export class ExpireMap<K, V> extends Map<K, any> {
         const _this = this;
         const itr = super.entries();
 
-        const next = (): IteratorResult<K> => {
-            const now = new Date().getTime();
-            do {
-                const next = itr.next();
-                const pair = next.value;
-                const entry = pair ? pair[1] : null;
-                const notExpired = entry && (!entry.expires || now < entry.expires);
-
-                if(next.done || notExpired)
-                    return {
-                        value: (pair ? pair[0] : undefined) as K,
-                        done: next.done
-                    };
-                else if(pair && !notExpired) super.delete(pair[0]);
-            } while(true);
-        };
-
         return {
-            *[Symbol.iterator]() { next },
-            next
+            [Symbol.iterator]() { return this; },
+            next(): IteratorResult<K> {
+                const now = new Date().getTime();
+                do {
+                    const next = itr.next();
+                    const pair = next.value;
+                    const entry = pair ? pair[1] : null;
+                    const notExpired = entry && (!entry.expires || now < entry.expires);
+    
+                    if(next.done || notExpired)
+                        return {
+                            value: (pair ? pair[0] : undefined) as K,
+                            done: next.done
+                        };
+                    else if(pair && !notExpired) _this.delete(pair[0]);
+                } while(true);
+            }
         };
     }
   
@@ -81,26 +94,24 @@ export class ExpireMap<K, V> extends Map<K, any> {
         const _this = this;
         const itr = super.entries();
 
-        const next = (): IteratorResult<V> => {
-            const now = new Date().getTime();
-            do {
-                const next = itr.next();
-                const pair = next.value;
-                const entry = pair ? pair[1] : null;
-                const notExpired = entry && (!entry.expires || now < entry.expires);
-
-                if(next.done || notExpired)
-                    return {
-                        value: (entry ? entry.data : undefined) as V,
-                        done: next.done
-                    };
-                else if(pair && !notExpired) super.delete(pair[0]);
-            } while(true);
-        };
-
         return {
-            *[Symbol.iterator]() { next },
-            next
+            [Symbol.iterator]() { return this; },
+            next(): IteratorResult<V> {
+                const now = new Date().getTime();
+                do {
+                    const next = itr.next();
+                    const pair = next.value;
+                    const entry = pair ? pair[1] : null;
+                    const notExpired = entry && (!entry.expires || now < entry.expires);
+    
+                    if(next.done || notExpired)
+                        return {
+                            value: (entry ? entry.data : undefined) as V,
+                            done: next.done
+                        };
+                    else if(pair && !notExpired) _this.delete(pair[0]);
+                } while(true);
+            }
         };
     }
   
@@ -109,8 +120,8 @@ export class ExpireMap<K, V> extends Map<K, any> {
         super.forEach((entry, key) => {
             if(!entry) return;
             if(!entry.expires || (new Date()).getTime() < entry.expires)
-                if(callbackfn) callbackfn(entry.data, key, _this);
-            else super.delete(key);
+                callbackfn(entry.data, key, thisArg || _this);
+            else _this.delete(key);
         }, thisArg);
     }
   
