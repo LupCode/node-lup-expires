@@ -258,7 +258,6 @@ export class ExpireMap<K, V> extends Map<K, V> { // actually: <K, ActualValue<V>
 
                     if(_this.resetLifespanOnAccess && entry && entry.expires && !expired)
                         entry.expires = now + (entry.maxAge ?? _this.defaultMaxAge ?? 0);
-                        //_this.set(pair![0] as K, entry.data, entry.maxAge ?? _this.defaultMaxAge ?? 0); // reset lifespan to original maxAge value
 
                     if(next.done || !expired)
                         return {
@@ -287,7 +286,6 @@ export class ExpireMap<K, V> extends Map<K, V> { // actually: <K, ActualValue<V>
 
                     if(_this.resetLifespanOnAccess && entry && entry.expires && !expired)
                         entry.expires = now + (entry.maxAge ?? _this.defaultMaxAge ?? 0);
-                        //_this.set(pair![0] as K, entry.data, entry.maxAge ?? _this.defaultMaxAge ?? 0); // reset lifespan to original maxAge value
 
                     if(next.done || !expired)
                         return {
@@ -316,7 +314,6 @@ export class ExpireMap<K, V> extends Map<K, V> { // actually: <K, ActualValue<V>
 
                     if(_this.resetLifespanOnAccess && entry && entry.expires && !expired)
                         entry.expires = now + (entry.maxAge ?? _this.defaultMaxAge ?? 0);
-                        //_this.set(pair![0] as K, entry.data, entry.maxAge ?? _this.defaultMaxAge ?? 0); // reset lifespan to original maxAge value
     
                     if(next.done || !expired)
                         return {
@@ -339,7 +336,6 @@ export class ExpireMap<K, V> extends Map<K, V> { // actually: <K, ActualValue<V>
 
             if(_this.resetLifespanOnAccess && e.expires && !expired)
                 e.expires = now + (e.maxAge ?? _this.defaultMaxAge ?? 0);
-                //_this.set(key, e.data, e.maxAge ?? _this.defaultMaxAge ?? 0); // reset lifespan to original maxAge value
 
             if(!expired)
                 callbackfn(e.data, key, thisArg || _this);
@@ -355,7 +351,6 @@ export class ExpireMap<K, V> extends Map<K, V> { // actually: <K, ActualValue<V>
 
         if(this.resetLifespanOnAccess && entry && entry.expires && !expired)
             entry.expires = now + (entry.maxAge ?? this.defaultMaxAge ?? 0);
-            //this.set(key, entry.data, entry.maxAge ?? this.defaultMaxAge ?? 0); // reset lifespan to original maxAge value
 
         if(!expired) return entry.data;
         super.delete(key);
