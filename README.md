@@ -12,6 +12,12 @@ Expire time can be defined for stored entries after which they will get automati
 ```javascript
 const { ExpireMap } = require("lup-expires);
 
+const map = new ExpireMap({
+    defaultExpire: 1000, // Default expire time in milliseconds.
+    extendLifespanOnTouch: false, // If true, the lifespan of the entry will be extended on every access of that element.
+});
+map.set("key1", "value1"); // Will expire in 1000ms
+map.set("key2", "value2", 2000); // Will expire in 2000ms
 
 ```
 
@@ -21,5 +27,11 @@ const { ExpireMap } = require("lup-expires);
 ```typescript
 import { ExpireMap } from "lup-expires"
 
+const map = new ExpireMap<string, string>({
+    defaultExpire: 1000, // Default expire time in milliseconds.
+    extendLifespanOnTouch: false, // If true, the lifespan of the entry will be extended on every access of that element.
+});
+map.set("key1", "value1"); // Will expire in 1000ms
+map.set("key2", "value2", 2000); // Will expire in 2000ms
 
 ```
